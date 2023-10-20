@@ -2420,4 +2420,3 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
         return bestLocation;
     }
 
-}
