@@ -61,64 +61,43 @@
                 android:layout_height="208dp"
                 android:layout_weight="1">
 
-                <LinearLayout
-                    android:layout_width="137dp"
-                    android:layout_height="194dp"
-                    android:layout_weight=".33"
-                    android:orientation="horizontal">
+                <ProgressBar
+                    android:id="@+id/loading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight=".50"
+                    android:indeterminate="true"
+                    android:visibility="gone" />
 
-                    <ImageView
-                        android:id="@+id/pedcrossing"
-                        android:layout_width="wrap_content"
-                        android:layout_height="84dp"
-                        android:layout_gravity="bottom|center|right"
-                        android:layout_weight="1"
-                        android:visibility="visible"
-                        app:srcCompat="@drawable/pedcrossing" />
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/pedcrossing"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="207dp"
+                    android:layout_gravity="bottom|center|right"
+                    android:layout_weight="1"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pedcrossing" />
 
-                <LinearLayout
-                    android:layout_width="279dp"
-                    android:layout_height="198dp"
-                    android:layout_weight=".33"
-                    android:gravity="center_horizontal"
-                    android:padding="5sp">
+                <ImageView
+                    android:id="@+id/straight"
+                    android:layout_centerInParent="true"
+                    android:layout_width="316dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight=".70"
+                    android:src="@drawable/threeway"
+                    android:visibility="visible" />
 
-                    <ProgressBar
-                        android:id="@+id/loading"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight=".50"
-                        android:indeterminate="true"
-                        android:visibility="gone" />
-
-                    <ImageView
-                        android:id="@+id/straight"
-                        android:layout_width="200dp"
-                        android:layout_height="187dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight=".70"
-                        android:src="@drawable/threeway"
-                        android:visibility="visible" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="139dp"
-                    android:layout_height="197dp"
-                    android:layout_weight=".33"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/bycyling"
-                        android:layout_width="wrap_content"
-                        android:layout_height="85dp"
-                        android:layout_gravity="bottom|center|left"
-                        android:layout_weight="1"
-                        android:visibility="visible"
-                        app:srcCompat="@drawable/bicycle" />
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/bycyling"
+                    android:layout_width="wrap_content"
+                    android:layout_height="207dp"
+                    android:layout_gravity="bottom|center|left"
+                    android:layout_weight="1"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/bicycle" />
 
             </LinearLayout>
 
@@ -290,6 +269,5 @@
 
 
 </LinearLayout>
-
 
 

@@ -111,8 +111,44 @@ import java.net.SocketException;
 
 public class MainActivity extends AppCompatActivity{ //} implements MqttCallback {
 
+    /* OSM Map */
     private MapView map;
     private IMapController mapController;
+    public Context context = new Context();
+    public Context context_psm = new Context();
+
+    MapData mapData;
+    public boolean FakeLoc = true;
+    private String Cd = "40.74170640304741, -74.1803510852022";
+    public double FLat = Double.valueOf(Cd.split(",")[0]);
+    public double FLon = Double.valueOf(Cd.split(",")[1]);
+    /////////////////////////////////////////////////////////////////////
+
+    /* Vehicle Peripherals */
+    public List<Double> Lst =  new ArrayList<Double>();
+    public Map<String, ArrayList<Double>> IntCoords = new HashMap<String,ArrayList<Double>>();
+
+    public Map<String, String> IntersectionIDs = new HashMap<String,String>();
+    public Map<String, String> ClientIDs = new HashMap<String,String>();
+    public String DirectionPhNum;
+    public String NextIntersection;
+    public String PrevIntersection = "Null";
+    public double DistToNextInt;
+    public double TimeToNextInt;
+    public double VehSpeed;
+    public double VehBearing;
+    public Location AndroidLoc;
+    public Location NextIntCoord;
+    public Location PSMLoc;
+
+    public Map<String, Object> AllMAPs = new HashMap<String, Object>();
+    public String IntID_Lane_Street_PhaseNum;
+
+    public List<Double> FakeLat =  new ArrayList<Double>();
+    public List<Double> FakeLon =  new ArrayList<Double>();
+    public int FakePosIter = 0;
+    public double MinCheckDist = 3.0E-5;
+    /////////////////////////////////////////////////////////////////////
 
     Calendar c1, c2 ;
     private SimpleDateFormat df = new SimpleDateFormat("hh:mm:ss");
@@ -120,9 +156,6 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
     private boolean mActive;
     private static boolean flag=false;
     private static boolean flag_psm=false;
-
-    public Context context = new Context();
-    public Context context_psm = new Context();
 
     public Object ObjBearingInfo = new Object();
 
@@ -157,35 +190,6 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
 
     //public Map<String, Polygon> DictData = new HashMap<String,Polygon>(); // this is the collection of polygon for map display
     //public Map<String, ArrayList> DictDataArr = new HashMap<String,ArrayList>(); // this is for the in-out check purpose.
-    public List<Double> Lst =  new ArrayList<Double>();
-    public Map<String, ArrayList<Double>> IntCoords = new HashMap<String,ArrayList<Double>>();
-
-    public Map<String, String> IntersectionIDs = new HashMap<String,String>();
-    public Map<String, String> ClientIDs = new HashMap<String,String>();
-    public String DirectionPhNum;
-    public String NextIntersection;
-    public String PrevIntersection = "Null";
-    public double DistToNextInt;
-    public double TimeToNextInt;
-    public double VehSpeed;
-    public double VehBearing;
-    public Location AndroidLoc;
-    public Location NextIntCoord;
-    public Location PSMLoc;
-
-    public Map<String, Object> AllMAPs = new HashMap<String, Object>();
-    public String IntID_Lane_Street_PhaseNum;
-
-    public List<Double> FakeLat =  new ArrayList<Double>();
-
-    public List<Double> FakeLon =  new ArrayList<Double>();
-    public int FakePosIter = 0;
-    public double MinCheckDist = 3.0E-5;
-
-    public boolean FakeLoc = true;
-    private String Cd = "40.74170640304741, -74.1803510852022";
-    public double FLat = Double.valueOf(Cd.split(",")[0]);
-    public double FLon = Double.valueOf(Cd.split(",")[1]);
 
     public List<String> PSMMsgs = new ArrayList<String>();
 
@@ -236,7 +240,6 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
     private SPAT spatMSG;
     private PersonalSafetyMessage psMsg;
 
-    MapData mapData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -367,10 +370,10 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
         }
 
 
-            // Retrive lat/lon of each intersection
-            //IntersectionCoords();
-            // Retrive Polygon Definition for Each Street
-            //GetStreetList();
+        // Retrive lat/lon of each intersection
+        //IntersectionCoords();
+        // Retrive Polygon Definition for Each Street
+        //GetStreetList();
 
         ArrayList StartLoc = new ArrayList();
         StartLoc = ShowMap();
@@ -830,25 +833,25 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
         String eventState = "null";
         switch (id) {
             case 0 : eventState = "unavailable";
-            break;
+                break;
             case 1 : eventState = "dark";
-            break;
+                break;
             case 2 : eventState = "stop-Then-Proceed";
-            break;
+                break;
             case 3 : eventState = "stop-And-Remain";
-            break;
+                break;
             case 4 : eventState = "pre-Movement";
-            break;
+                break;
             case 5 : eventState = "permissive-Movement-Allowed";
-            break;
+                break;
             case 6 : eventState = "protected-Movement-Allowed";
-            break;
+                break;
             case 7 : eventState = "permissive-clearance";
-            break;
+                break;
             case 8 : eventState = "protected-clearance";
-            break;
+                break;
             case 9 : eventState = "caution-Conflicting-Traffic";
-            break;
+                break;
 
         }
         return eventState;
@@ -879,9 +882,9 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                         PSMMsgs = new ArrayList<String>();
 
                     }catch (Exception e) {
-                    System.out.println("Error in PSM Data ");
-                    e.printStackTrace();
-                }
+                        System.out.println("Error in PSM Data ");
+                        e.printStackTrace();
+                    }
 
 
 
@@ -1044,10 +1047,10 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                             } else if (JsonResults.get("SigStatus").equals("stop-And-Remain")) {
                                 CurSignalStatus = "Red, Remaining Red: " + String.valueOf(RemTime);
                                 sigDirections.setColorFilter(Color.RED);
-                               if (String.valueOf(RemTime).equals("200")) {
-                                   text9.setTextSize(16);
-                                   text9.setText("Remaining Time Unavailable: Actuated Control");
-                               }
+                                if (String.valueOf(RemTime).equals("200")) {
+                                    text9.setTextSize(16);
+                                    text9.setText("Remaining Time Unavailable: Actuated Control");
+                                }
                                 else
                                     text9.setText("To Green in "+String.valueOf(RemTime)+" Seconds");
                                 //text9.setText("To Green in "+String.valueOf(RemTime) +" Seconds");
@@ -1761,7 +1764,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                     }
 
                     //sigDirections.setImageResource(R.drawable.throughonly);
-                     //Display Movement Direction for the associated phase
+                    //Display Movement Direction for the associated phase
                     // Codes below are for left-turn exclusive lane case, which needs to be revised
                     /*
                     if (StreetName.equalsIgnoreCase("3_South_First_WestMarket") || StreetName.equalsIgnoreCase("7_North_First_WestMarket") )
@@ -1775,7 +1778,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                     DirectionPhNum = IntID_Lane_Street_PhaseNum.split("_")[5];
                     NextIntersection = StreetName.split("@")[1];
                     text7.setText("Toward "+NextIntersection );
-                   //Log.d(TAG, "Next Intersection---------------: " + NextIntersection);
+                    //Log.d(TAG, "Next Intersection---------------: " + NextIntersection);
 
                     double Slat = (double)(Integer.valueOf(IntID_Lane_Street_PhaseNum.split("_")[0]))/10000000.0;
                     double Slon = (double)(Integer.valueOf(IntID_Lane_Street_PhaseNum.split("_")[1]))/10000000.0;
@@ -1985,9 +1988,9 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                             //Log.d(TAG, "Print PSM");
                             if (IntID_Lane_Street_PhaseNum != null)
                                 PSMMsgs.add(psmString);
-                                Log.d(TAG, String.valueOf(PSMMsgs.size()));
+                            Log.d(TAG, String.valueOf(PSMMsgs.size()));
 
-                                //printPSM(psmString);
+                            //printPSM(psmString);
 
                         } catch (Exception e1) {
                             e1.printStackTrace();
@@ -2122,10 +2125,14 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                     if (type.equals("1"))
                     {
                         CrossingPed.setVisibility(View.VISIBLE);
+                        NearbyBicycle.setVisibility(View.GONE);
+                        sigDirections.setVisibility(View.GONE);
                     }
                     if (type.equals("2"))
                     {
                         NearbyBicycle.setVisibility(View.VISIBLE);
+                        sigDirections.setVisibility(View.GONE);
+                        CrossingPed.setVisibility(View.GONE);
                     }
 
                     textPedMsg.setVisibility(View.VISIBLE);
@@ -2158,7 +2165,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                 Value v =decodeMessageFrame.value.getDecodedValue();
                 spatMSG = (SPAT) v;
             } catch (Exception e) {
-               e.printStackTrace();
+                e.printStackTrace();
             }
         } catch (Exception e) {
             System.out.println("Init failure");
