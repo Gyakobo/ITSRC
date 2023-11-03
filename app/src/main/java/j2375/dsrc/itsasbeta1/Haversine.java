@@ -23,7 +23,6 @@ public class Haversine {
         return new double[] {projectedX, projectedY};
     }
 
-
     // Function to calculate the distance from a point to a line
     public static double distanceToLine(double x, double y, double x1, double y1, double x2, double y2) {
         // Project the point onto the line
