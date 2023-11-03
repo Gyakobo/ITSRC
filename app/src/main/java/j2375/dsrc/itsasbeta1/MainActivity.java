@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -124,6 +125,8 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
     public double FLon = Double.valueOf(Cd.split(",")[1]);
     /////////////////////////////////////////////////////////////////////
 
+
+
     /* Vehicle Peripherals */
     public List<Double> Lst =  new ArrayList<Double>();
     public Map<String, ArrayList<Double>> IntCoords = new HashMap<String,ArrayList<Double>>();
@@ -231,7 +234,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
     Marker IntersectionMarker;
     public TextView Msg,text, text2, text3,text4,text5,text6,text7,text8,text9,text10,text11, textPedMsg;
 
-    ImageView sigDirections, CrossingPed, NearbyBicycle;
+    ImageView sigDirections, current_sign, NearbyBicycle; // CrossingPed
     ProgressBar progressBar;
 
     private SpeedometerGauge speedometer;
@@ -241,6 +244,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
     private PersonalSafetyMessage psMsg;
 
 
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -323,14 +327,17 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
 
         sigDirections = (ImageView)findViewById(R.id.straight);
         progressBar = (ProgressBar) findViewById(R.id.loading);
-        CrossingPed = (ImageView)findViewById(R.id.pedcrossing);
+        // CrossingPed = (ImageView)findViewById(R.id.pedcrossing);
         NearbyBicycle = (ImageView)findViewById(R.id.bycyling);
-
 
         sigDirections.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        CrossingPed.setVisibility(View.GONE);
-        NearbyBicycle.setVisibility(View.GONE);
+        // CrossingPed.setVisibility(View.GONE);
+        NearbyBicycle.setVisibility(View.INVISIBLE);
+
+        // Tipa umnii
+        current_sign = (ImageView)findViewById(R.id.bycyling);
+        current_sign.setVisibility(View.GONE);
 
         activity = this;
 
@@ -651,8 +658,6 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
 
                     Log.d(TAG, "...........................Subscribe Message............................");
 
-
-
                     if (IntID_Lane_Street_PhaseNum == null) {
                         Log.d(TAG, " SubscribePSM : No Intersection Name for PSM is available");
                         return;
@@ -866,9 +871,11 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                 @Override
                 public void run() {
                     try {
-                        CrossingPed.setVisibility(View.GONE);
+                        // CrossingPed.setVisibility(View.GONE);
                         NearbyBicycle.setVisibility(View.GONE);
                         textPedMsg.setVisibility(View.GONE);
+
+                        sigDirections.setImageDrawable(current_sign.getDrawable());
 
                         if (PSMMsgs.size() == 0) {
                             //Log.d(TAG, "No PSM Message");
@@ -1021,7 +1028,8 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                             //Log.d(TAG,"-------------------------------Here");
 
                             if (JsonResults.get("SigStatus").equals("protected-Movement-Allowed")) {
-                                sigDirections.setColorFilter(Color.GREEN);
+                                // sigDirections.setColorFilter(Color.GREEN);
+                                current_sign.setColorFilter(Color.GREEN);
                                 CurSignalStatus = "Green, Remaining Green: " + String.valueOf(RemTime);
                                 if (String.valueOf(RemTime).equals("200")) {
                                     text9.setTextSize(16);
@@ -1034,7 +1042,8 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
 
                             } else if (JsonResults.get("SigStatus").equals("protected-clearance")) {
                                 CurSignalStatus = "Yellow, Remaining Green: " + String.valueOf(RemTime);
-                                sigDirections.setColorFilter(Color.YELLOW);
+                                // sigDirections.setColorFilter(Color.YELLOW);
+                                current_sign.setColorFilter(Color.YELLOW);
                                 if (String.valueOf(RemTime).equals("200")) {
                                     text9.setTextSize(16);
                                     text9.setText("Remaining Time Unavailable: Actuated Control");
@@ -1046,7 +1055,8 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
 
                             } else if (JsonResults.get("SigStatus").equals("stop-And-Remain")) {
                                 CurSignalStatus = "Red, Remaining Red: " + String.valueOf(RemTime);
-                                sigDirections.setColorFilter(Color.RED);
+                                // sigDirections.setColorFilter(Color.RED);
+                                current_sign.setColorFilter(Color.RED);
                                 if (String.valueOf(RemTime).equals("200")) {
                                     text9.setTextSize(16);
                                     text9.setText("Remaining Time Unavailable: Actuated Control");
@@ -1742,25 +1752,32 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
 
 
                     if (maneuver.equals("-128")){
-                        sigDirections.setImageResource(R.drawable.throughonly);
+                        // sigDirections.setImageResource(R.drawable.throughonly);
+                        current_sign.setImageResource(R.drawable.throughonly);
                     }
                     if (maneuver.equals("-96")){
-                        sigDirections.setImageResource(R.drawable.right);
+                        // sigDirections.setImageResource(R.drawable.right);
+                        current_sign.setImageResource(R.drawable.right);
                     }
                     if (maneuver.equals("-64")){
-                        sigDirections.setImageResource(R.drawable.left);
+                        // sigDirections.setImageResource(R.drawable.left);
+                        current_sign.setImageResource(R.drawable.left);
                     }
                     if (maneuver.equals("-32")){
-                        sigDirections.setImageResource(R.drawable.threeway);
+                        // sigDirections.setImageResource(R.drawable.threeway);
+                        current_sign.setImageResource(R.drawable.threeway);
                     }
                     if (maneuver.equals("32")){
-                        sigDirections.setImageResource(R.drawable.rightonly);
+                        // sigDirections.setImageResource(R.drawable.rightonly);
+                        current_sign.setImageResource(R.drawable.rightonly);
                     }
                     if (maneuver.equals("64")){
-                        sigDirections.setImageResource(R.drawable.leftonly);
+                        // sigDirections.setImageResource(R.drawable.leftonly);
+                        current_sign.setImageResource(R.drawable.leftonly);
                     }
                     if (maneuver.equals("96")){
-                        sigDirections.setImageResource(R.drawable.leftright);
+                        // sigDirections.setImageResource(R.drawable.leftright);
+                        current_sign.setImageResource(R.drawable.leftright);
                     }
 
                     //sigDirections.setImageResource(R.drawable.throughonly);
@@ -2010,7 +2027,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
             });
 
             textPedMsg.setVisibility(View.GONE);
-            CrossingPed.setVisibility(View.GONE);
+            // CrossingPed.setVisibility(View.GONE);
             NearbyBicycle.setVisibility(View.GONE);
 
             VZClientPSM.subscribe(tp);
@@ -2053,7 +2070,9 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
 //        }
 //    }
 
-    public void printPSM(String psmString){
+    // Function to calculate the Havarsine distance between two points on the
+
+    public void printPSM(String psmString){ // Main working function
         double dis=0.0;
         float[] distresults = new float[3];
 
@@ -2120,19 +2139,27 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                 String type = String.valueOf(psMsg.basicType.getValue());
 
                 if (StreetNameVeh.equals(StreetNamePed)) {
-//                    CrossingPed.setVisibility(View.VISIBLE);
+//                    // CrossingPed.setVisibility(View.VISIBLE);
 
                     if (type.equals("1"))
                     {
-                        CrossingPed.setVisibility(View.VISIBLE);
-                        NearbyBicycle.setVisibility(View.GONE);
-                        sigDirections.setVisibility(View.GONE);
+                        // CrossingPed.setVisibility(View.VISIBLE);
+                        // sigDirections.setVisibility(View.GONE);
+                        NearbyBicycle.setVisibility(View.VISIBLE);
+
+                        // My Changes
+                        NearbyBicycle.setImageDrawable(current_sign.getDrawable());
+                        sigDirections.setImageResource(R.drawable.bicycle);
                     }
                     if (type.equals("2"))
                     {
+                        // sigDirections.setVisibility(View.GONE);
+                        // CrossingPed.setVisibility(View.INVISIBLE);
                         NearbyBicycle.setVisibility(View.VISIBLE);
-                        sigDirections.setVisibility(View.GONE);
-                        CrossingPed.setVisibility(View.GONE);
+
+                        // My Changes
+                        NearbyBicycle.setImageDrawable(current_sign.getDrawable());
+                        sigDirections.setImageResource(R.drawable.pedcrossing);
                     }
 
                     textPedMsg.setVisibility(View.VISIBLE);
@@ -2419,4 +2446,4 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
         }
         return bestLocation;
     }
-
+}
