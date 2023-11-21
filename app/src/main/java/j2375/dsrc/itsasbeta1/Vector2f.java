@@ -29,6 +29,7 @@ public class Vector2f {
         return v1.getX() * v2.getX() + v1.getY() * v2.getY();
     }
 
+
     public static Vector2f findPerpendicular(Vector2f v1, Vector2f v2, double d) {
         // Calculate midpoint
         double midX = (v1.getX() + v2.getX()) / 2.0;
