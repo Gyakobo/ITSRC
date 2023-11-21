@@ -121,11 +121,15 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
     MapData mapData;
     public boolean FakeLoc = true;
     private String Cd = "40.74170640304741, -74.1803510852022";
+    // private String Cd = "40.741613, -74.18035";
     public double FLat = Double.valueOf(Cd.split(",")[0]);
     public double FLon = Double.valueOf(Cd.split(",")[1]);
     /////////////////////////////////////////////////////////////////////
 
-
+    /* Pedestrian Coords */
+    Vector2f pedVector = new Vector2f(0, 0);
+    Vector2f dir = new Vector2f(0, 0);
+    /////////////////////////////////////////////////////////////////////
 
     /* Vehicle Peripherals */
     public List<Double> Lst =  new ArrayList<Double>();
@@ -232,7 +236,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
     LocationManager mLocationManager;
     Marker MyMarker;
     Marker IntersectionMarker;
-    public TextView Msg,text, text2, text3,text4,text5,text6,text7,text8,text9,text10,text11, textPedMsg;
+    public TextView Msg,text, text1, text2, text3,text4,text5,text6,text7,text8,text9,text10,text11, textPedMsg;
 
     ImageView sigDirections, current_sign, NearbyBicycle; // CrossingPed
     ProgressBar progressBar;
@@ -299,6 +303,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
         text4  = findViewById(R.id.textView4);
         text3  = findViewById(R.id.textView3);
         text2  = findViewById(R.id.textView2);
+        text1  = findViewById(R.id.textView1);
         text  = findViewById(R.id.textView1);
 
         text7 = findViewById(R.id.place);
@@ -1299,8 +1304,12 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                             maxY = Math.max(y1,y2);
                             if (x>= minX && x<=maxX && y>=minY && y<=maxY && d<=MinCheckDist) {
                                 //Log.d(TAG,"shortest distance from "+intname +".."+d);
+                                // carVector = new Vector2f(x - x0, y - y0);
                                 minD = d;
                                 NearestLine = intname;
+                                /*System.out.println("===========================================");
+                                System.out.println("Car Pos: " + y0 + ", " + x0);
+                                System.out.println("===========================================");*/
                             }
                         }
 
@@ -1316,8 +1325,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
         return NearestLine;
     }
 
-    private String
-    GetStreetNamePhasePed(double x0,double y0)
+    private String GetStreetNamePhasePed(double x0,double y0)
     {
         int i=0;
         double x1,y1,x2,y2;
@@ -1334,13 +1342,12 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
         String lat_,lon_;
         double MinCheckDistPed = 4.0E-5;
 
-
-
         ArrayList< Map<String, Object>> nodelist = null;
         ArrayList< Map<String, Object>> conlist = null;
         Map<String, Object> aInt = null;
 
         Map<String, Object> intersectionList = new HashMap<String,Object>();
+
 
 
         for (Map.Entry<String, Object> entry : AllMAPs.entrySet() ) {
@@ -1411,7 +1418,11 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                     }else{
                         x2=lon;
                         y2=lat;
-                        i=i+1;
+                        i++;
+
+                        /*System.out.println("===================================");
+                        System.out.println("lon: " + x2 + ", lat: " + y2);
+                        System.out.println("===================================");*/
 
                         a = (y2-y1)/(x2-x1);
                         b = -1.0;
@@ -1420,7 +1431,6 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                         d = Math.abs(a*x0+b*y0+c)/Math.sqrt(a*a+b*b);
                         x = (b*(b*x0-a*y0)-a*c)/(a*a+b*b);
                         y = (a*(-1.0*b*x0+a*y0)-b*c)/(a*a+b*b);
-
 
                         if (d<minD)
                         {
@@ -1431,8 +1441,12 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                             maxX = Math.max(x1,x2);
                             minY = Math.min(y1,y2);
                             maxY = Math.max(y1,y2);
-                            if (x>= minX && x<=maxX && y>=minY && y<=maxY) {
+                            if (x>= minX && x<=maxX && y>=minY && y<=maxY
+                            ) {
                                 //Log.d(TAG,"shortest distance from "+intname +".."+d);
+                                // pedVector.setX(x - x0);
+                                // pedVector.setX(y - y0);
+
                                 minD = d;
                                 NearestLine = intname;
                             }
@@ -1686,7 +1700,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
 
                     c1 = Calendar.getInstance();
                     String formattedDate = df.format(c1.getTime());
-                    text2.setText(formattedDate );
+                    text2.setText(formattedDate);
 
                     if (CurrPoint == null)
                     {
@@ -1748,9 +1762,6 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
 
                     maneuver = IntID_Lane_Street_PhaseNum.split("_")[6];
 
-
-
-
                     if (maneuver.equals("-128")){
                         // sigDirections.setImageResource(R.drawable.throughonly);
                         current_sign.setImageResource(R.drawable.throughonly);
@@ -1805,10 +1816,21 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                     IntersectionMarker.setPosition(new GeoPoint(Slat,Slon));
                     NextIntCoord = new Location("");
 
+                    // My changes
+                    // pos_of_next_intr.setX(Slat);
+                    // pos_of_next_intr.setY(Slon);
+
                     NextIntCoord.setLatitude(Slat);
                     NextIntCoord.setLongitude(Slon);
 
                     text3.setText(StreetName+"|"+DirectionPhNum);
+
+                    // Next Intersection
+
+                    /* System.out.println("=============================================");
+                    System.out.println("Next Intersection: " + NextIntersection);
+                    System.out.println("Next Intersection: " + Slat + ", " + Slon);
+                    System.out.println("============================================="); */
 
                     //}
                     //else{
@@ -2138,9 +2160,41 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                 boolean crossSta = Boolean.valueOf(psMsg.crossState.value);
                 String type = String.valueOf(psMsg.basicType.getValue());
 
-                if (StreetNameVeh.equals(StreetNamePed)) {
-//                    // CrossingPed.setVisibility(View.VISIBLE);
+                // Main changes
+                dir.setX(NextIntCoord.getLatitude() - AndroidLoc.getLatitude());
+                dir.setY(NextIntCoord.getLongitude() - AndroidLoc.getLongitude());
+                pedVector.setX(y0 - AndroidLoc.getLatitude());
+                pedVector.setY(x0 - AndroidLoc.getLongitude());
 
+                double dotProduct = Vector2f.dotProduct(dir, pedVector);
+                double magnitude1 = dir.length();
+                double magnitude2 = pedVector.length();
+
+                double angleInRadians = 0;
+                double angleInDegrees = 0;
+
+                if (magnitude1 == 0.0 || magnitude2 == 0.0) {
+                    // angleInRadians = 0;
+                    // angleInDegrees = 0;
+                    text1.setText("No Ped Info");
+                }
+                else {
+                    angleInRadians = Math.acos(dotProduct / (magnitude1 * magnitude2));
+                    angleInDegrees = Math.toDegrees(angleInRadians);
+                    text1.setText("ped Angle: " + angleInDegrees);
+                }
+
+                System.out.println("==================================");
+                System.out.println("Ped " + "x: " + pedVector.getX() + " y: " + pedVector.getY());
+                System.out.println("Car " + "x: " + dir.getX() + " y: " + dir.getY());
+                System.out.println("ped Angle: " + angleInDegrees);
+                System.out.println("==================================");
+
+                if (StreetNameVeh.equals(StreetNamePed)
+                ) {
+//                  // CrossingPed.setVisibility(View.VISIBLE);
+
+                    // Code comes here?
                     if (type.equals("1"))
                     {
                         // CrossingPed.setVisibility(View.VISIBLE);
