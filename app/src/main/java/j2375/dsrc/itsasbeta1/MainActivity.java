@@ -2190,7 +2190,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                 System.out.println("ped Angle: " + angleInDegrees);
                 System.out.println("==================================");
 
-                if (StreetNameVeh.equals(StreetNamePed)
+                if (StreetNameVeh.equals(StreetNamePed) && angleInDegrees <= 90
                 ) {
 //                  // CrossingPed.setVisibility(View.VISIBLE);
 

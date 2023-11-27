@@ -3,8 +3,8 @@ package j2375.dsrc.itsasbeta1;
 import java.util.Vector;
 
 public class Vector2f {
-    private static double x;
-    private static double y;
+    private double x;
+    private double y;
 
     public Vector2f(double x, double y) {
         this.x = x;
@@ -47,16 +47,16 @@ public class Vector2f {
         return new Vector2f(newX, newY);
     }
 
-   public static double length() {
+   public double length() {
         return Math.sqrt(x*x + y*y);
    }
 
-    public static Vector2f normalVector() {
+    public Vector2f normalVector() {
         double d = Math.sqrt((x * x) + (y * y));
         return new Vector2f(x/d, y/d);
     }
 
-    public static Vector2f new_length(double d) {
+    public Vector2f new_length(double d) {
         double length = Math.sqrt((x * x) + (y * y));
         Vector2f return_vector = new Vector2f(x * d / length, y * d / length);
         return return_vector;
