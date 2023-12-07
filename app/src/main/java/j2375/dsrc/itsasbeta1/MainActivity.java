@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
     public Context context_psm = new Context();
 
     MapData mapData;
-    public boolean FakeLoc = true;
+    public boolean FakeLoc = false;
     private String Cd = "40.74170640304741, -74.1803510852022";
     // private String Cd = "40.741613, -74.18035";
     public double FLat = Double.valueOf(Cd.split(",")[0]);
@@ -2205,7 +2205,7 @@ public class MainActivity extends AppCompatActivity{ //} implements MqttCallback
                         NearbyBicycle.setImageDrawable(current_sign.getDrawable());
                         sigDirections.setImageResource(R.drawable.bicycle);
                     }
-                    if (type.equals("2"))
+                    else if (type.equals("2"))
                     {
                         // sigDirections.setVisibility(View.GONE);
                         // CrossingPed.setVisibility(View.INVISIBLE);
